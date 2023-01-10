@@ -162,12 +162,14 @@ jobs:
           Target: ${{ github.event.inputs.BUILD_TARGET }}.img
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      continue-on-error: true
         
     - name: Upload to Telegram
       run: |
-        cd out/target/product/${{ github.event.inputs.DEVICE_NAME }}
+        cd workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}
         for i in *.zip; do curl -F document=@"filename" https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendDocument?chat_id=5202036980; done
-        
+      continue-on-error: true
+      
     - uses: fastai/workflows/ssh@master
       with:
         ssh_key: ${{ secrets.SSH_KEY }}
