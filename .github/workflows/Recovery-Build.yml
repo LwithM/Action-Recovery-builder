@@ -71,6 +71,7 @@ jobs:
 
     - name: Prepare the environment
       run: |
+        curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=开始安装所需依赖..."
         sudo apt update
         sudo apt -y upgrade
         sudo apt -y install git-core gnupg flex bison gperf zip curl zlib1g-dev gcc-multilib g++-multilib libc6-dev-i386 lib32ncurses5-dev x11proto-core-dev libx11-dev lib32z-dev ccache libgl1-mesa-dev libxml2-utils xsltproc unzip python make 
@@ -107,7 +108,9 @@ jobs:
           
     - name: Repo Sync
       run: |
+        curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=开始拉取 ${{ github.event.inputs.MANIFEST_BRANCH }} 分支的代码..."
         repo sync -j$(nproc --all) --force-sync
+        curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=拉取完成"
       working-directory: workspace
       
     - name: Clone device tree
@@ -145,6 +148,7 @@ jobs:
 
     - name: Building recovery
       run: |
+        curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=开始编译Recovery  设备名：${{ github.event.inputs.DEVICE_NAME }}  编译分支：${{ github.event.inputs.MANIFEST_BRANCH }}"
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
@@ -167,7 +171,7 @@ jobs:
     - name: Upload to Telegram
       run: |
         cd workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}
-        for i in *.zip; do curl -F document=@"filename" https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendDocument?chat_id=5202036980; done
+        for i in *.zip; do curl -F document=@"$i" https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendDocument?chat_id=5202036980; done
       continue-on-error: true
       
     - uses: fastai/workflows/ssh@master
