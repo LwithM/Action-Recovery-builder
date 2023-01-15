@@ -157,8 +157,8 @@ jobs:
     - name: Compress all IMG files
       run: |
         cd workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}
-        for img in *.img; do zip Recoveryimage.zip $img;
-        for azip in *.zip; do zip AllinstallZip.zip $azip;
+        for img in *.img; do zip Recoveryimage.zip $img;done
+        for azip in *.zip; do zip AllinstallZip.zip $azip;done
       continue-on-error: true
 
     - name: Upload to Release
