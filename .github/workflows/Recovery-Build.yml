@@ -39,9 +39,9 @@ on:
         required: true
         default: 'twrp_mi439'
       BUILD_TARGET:
-        description: 'BUILD_TARGET'
+        description: 'BUILD_TARGET e.g.(recoveryimage)'
         required: true
-        default: 'recovery'
+        default: 'recoveryimage'
 
 jobs:
   build:
@@ -151,7 +151,7 @@ jobs:
         curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=开始编译Recovery  设备名：${{ github.event.inputs.DEVICE_NAME }}  编译分支：${{ github.event.inputs.MANIFEST_BRANCH }}"
         source build/envsetup.sh
         export ALLOW_MISSING_DEPENDENCIES=true
-        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && make ${{ github.event.inputs.BUILD_TARGET }}image -j$(nproc --all)
+        lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka ${{ github.event.inputs.BUILD_TARGET }} -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
     - name: Upload to Release
