@@ -106,7 +106,7 @@ jobs:
       run: |
         export USE_CCACHE=1
         export CCACHE_EXEC=/usr/bin/ccache
-        ccache -M 50G
+        ccache -M 200G
         ccache -o compression=true
         curl -X POST "https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendMessage" -d "chat_id=5202036980&text=开始拉取 ${{ github.event.inputs.MANIFEST_BRANCH }} 分支的代码..."
         repo sync -j$(nproc --all) --force-sync
