@@ -154,22 +154,12 @@ jobs:
         lunch ${{ github.event.inputs.MAKEFILE_NAME }}-eng && make clean && mka ${{ github.event.inputs.BUILD_TARGET }} -j$(nproc --all)
       working-directory: ${{ steps.pwd.outputs.workspace-folder }}
 
-    - name: Compress all IMG files
-      run: |
-        cd workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}
-        for img in *.img; do zip Recoveryimage.zip $img;done
-        for azip in *.zip; do zip AllinstallZip.zip $azip;done
-      continue-on-error: true
-
     - name: Upload to Release
       uses: softprops/action-gh-release@v1
       with:
         files: |
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/recovery.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/boot.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/vendor_boot.img
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/Recoveryimage.zip
-          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/AllinstallZip.zip
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.zip
+          workspace/out/target/product/${{ github.event.inputs.DEVICE_NAME }}/*.img
         name: ${{ github.event.inputs.DEVICE_NAME }}-${{ github.event.inputs.MANIFEST_BRANCH }}-${{ github.run_id }}
         tag_name: ${{ github.run_id }}
         body: |
@@ -187,11 +177,3 @@ jobs:
         #for image in *.img; do curl -F document=@"$image" https://api.telegram.org/bot5838326569:AAHDBk9CwwAgRUu1f97lD9Oi1jTaNcXCUFU/sendDocument?chat_id=5202036980; done
       continue-on-error: true
       
-    - uses: fastai/workflows/ssh@master
-      with:
-        ssh_key: ${{ secrets.SSH_KEY }}
-        key_file: id_ecdsa
-    - run: source ubuntu-run.sh
-    - name: Setup tmate session
-      timeout-minutes: 460
-      uses: mxschmitt/action-tmate@master
